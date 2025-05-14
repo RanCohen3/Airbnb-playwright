@@ -2,6 +2,7 @@ import pytest
 import logging
 from pages.home_page import AirBnbHomePage
 from pages.search_results_page import SearchResultsPage
+from test_config import location, checkin, checkout, adults_count
 
 logger = logging.getLogger("airbnb_tests")
 
@@ -22,21 +23,16 @@ def test_case_one(page):
     home.handle_popup_if_exists()
 
     # 2. Search for apartments
-    location = "Tel Aviv-Yafo"
-    checkin = "2025-08-01"
-    checkout = "2025-08-05"
-    adults = 2
-
-    home.search(location=location, checkin=checkin, checkout=checkout, adults=adults)
+    home.search(location=location, checkin=checkin, checkout=checkout, adults=adults_count)
     home.wait_page_load()
 
     # 3. Validate parameters of results
     current_url = home.get_url()
     # replaced characters to match the url syntax
     assert f"airbnb.com/s/{location}".replace('-', "~").replace(" ", "-") in current_url
-    assert "checkin=2025-08-01" in current_url
-    assert "checkout=2025-08-05" in current_url
-    assert "adults=2" in current_url
+    assert f"checkin={checkin}" in current_url
+    assert f"checkout={checkout}" in current_url
+    assert f"adults={adults_count}" in current_url
 
     # 4. Analyze results
     results = SearchResultsPage(page)
