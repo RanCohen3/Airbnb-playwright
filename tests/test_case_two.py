@@ -3,13 +3,18 @@ import pytest
 from pages.home_page import AirBnbHomePage
 from pages.listing_details_page import ListingDetailsPage
 from pages.search_results_page import SearchResultsPage
-from test_config import location, checkin, checkout, adults_count
+from test_config import case_two_conf
 
 
 logger = logging.getLogger("airbnb_tests")
 
 @pytest.mark.playwright
 def test_case_two(page):
+    location = case_two_conf["location"]
+    checkin = case_two_conf["checkin"]
+    checkout = case_two_conf["checkout"]
+    adults_count = case_two_conf["adults_count"]
+    children_count = case_two_conf["children_count"]
     logger.info("starting test case one")
 
     # 1. Navigate to airbnb homepage
@@ -24,7 +29,8 @@ def test_case_two(page):
     home.handle_popup_if_exists()
 
     # 2. Search for apartments
-    home.search(location=location, checkin=checkin, checkout=checkout, adults=adults_count)
+    home.search(location=location, checkin=checkin, checkout=checkout, adults=adults_count,
+                children=children_count)
     home.wait_page_load()
 
     # 3. Validate parameters of results
@@ -53,4 +59,9 @@ def test_case_two(page):
     listing_details.wait_page_load()
     listing_details.handle_popup_if_exists()
 
+    checkin_from_card = listing_details.page.locator("div[data-testid='change-dates-checkIn']").text_content()
+    checkout_from_card = listing_details.page.locator("div[data-testid='change-dates-checkOut']").text_content()
+
+    logger.info(f"check in on {checkin_from_card}")
+    logger.info(f"check out on {checkout_from_card}")
 

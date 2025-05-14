@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from .base_page import BasePage
 from playwright.sync_api import Page, expect
 import logging
@@ -21,17 +23,9 @@ class ListingDetailsPage(BasePage):
         super().__init__(page)
         self.logger = logging.getLogger(__name__)
 
-    # def wait_for_page_load(self):
-    #     """Wait for the listing details page to load"""
-    #     self.logger.info("Waiting for listing details page to load")
-    #     self.page.wait_for_selector(self.LISTING_TITLE)
-    #     return self
-
     def get_reservation_details(self) -> Dict:
-        """Get details from the reservation card
-
-        Returns:
-            Dictionary containing reservation details
+        """
+        Get details from the reservation card
         """
         self.logger.info("Getting reservation details")
 
@@ -43,6 +37,12 @@ class ListingDetailsPage(BasePage):
         self.page.wait_for_selector(price_selector)
         price_per_night_with_sign = self.page.locator(price_selector).first.text_content()
         price_per_night = re.sub(r'[^\d.]', '', price_per_night_with_sign)
+
+        checkin_from_card = self.page.locator("div[data-testid='change-dates-checkIn']").text_content()
+        checkout_from_card = self.page.locator("div[data-testid='change-dates-checkOut']").text_content()
+
+        formatted_date_checkin = datetime.strptime(checkin_from_card, "%m/%d/%Y").strftime("%Y-%m-%d")
+        formatted_date_checkout = datetime.strptime(checkout_from_card, "%m/%d/%Y").strftime("%Y-%m-%d")
 
         # Extract check-in and check-out dates
         # checkin_selector = '[data-testid="change-dates-checkIn"]'

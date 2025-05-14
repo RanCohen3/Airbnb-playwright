@@ -2,13 +2,17 @@ import pytest
 import logging
 from pages.home_page import AirBnbHomePage
 from pages.search_results_page import SearchResultsPage
-from test_config import location, checkin, checkout, adults_count
+from test_config import case_one_conf
 
 logger = logging.getLogger("airbnb_tests")
 
 
 @pytest.mark.playwright
 def test_case_one(page):
+    location = case_one_conf["location"]
+    checkin = case_one_conf["checkin"]
+    checkout = case_one_conf["checkout"]
+    adults_count = case_one_conf["adults_count"]
     logger.info("starting test case one")
 
     # 1. Navigate to airbnb homepage
