@@ -19,7 +19,7 @@ class BasePage:
         self.page.wait_for_timeout(1000 * 5)
 
     def switch_he_to_en(self):
-        if "he." in self.page.url:
+        if "he." in self.page.url or self.page.query_selector('button[aria-label="בחירת שפה ומטבע"]') is not None:
             # If not on the US site, look for the language/currency button
             language_currency_button = self.page.locator(
                 "button[aria-label='בחירת שפה ומטבע']")  # Modify this selector if needed
