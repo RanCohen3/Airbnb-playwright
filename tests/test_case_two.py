@@ -40,6 +40,7 @@ def test_case_two(page):
     assert f"checkin={checkin}" in current_url
     assert f"checkout={checkout}" in current_url
     assert f"adults={adults_count}" in current_url
+    assert f"adults={adults_count}" in current_url
     logger.info("Arguments assertions done")
 
     # 4. Analyze results
@@ -59,9 +60,11 @@ def test_case_two(page):
     listing_details.wait_page_load()
     listing_details.handle_popup_if_exists()
 
-    checkin_from_card = listing_details.page.locator("div[data-testid='change-dates-checkIn']").text_content()
-    checkout_from_card = listing_details.page.locator("div[data-testid='change-dates-checkOut']").text_content()
+    details = listing_details.get_reservation_details()
 
-    logger.info(f"check in on {checkin_from_card}")
-    logger.info(f"check out on {checkout_from_card}")
+    logger.info(f"price per night {details['price_per_night']}")
+    logger.info(f"check in on {details['check-in']}")
+    logger.info(f"check out on {details['check-out']}")
+
+
 
