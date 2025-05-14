@@ -19,6 +19,9 @@ class AirBnbHomePage(BasePage):
     def open_page(self):
         self.page.goto(self.URL)
 
+    def get_url(self):
+        return self.URL
+
     def wait_page_load(self):
         self.page.wait_for_load_state('domcontentloaded')
     def switch_he_to_en(self):
