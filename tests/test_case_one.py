@@ -3,6 +3,7 @@ import logging
 from pages.home_page import AirBnbHomePage
 from pages.search_results_page import SearchResultsPage
 from test_config import case_one_conf
+from utils.helpers import get_cheapest, get_highest_rated
 
 logger = logging.getLogger("airbnb_tests")
 
@@ -42,8 +43,8 @@ def test_case_one(page):
     # 4. Analyze results
     results = SearchResultsPage(home.page)
     listings = results.extract_details()
-    highest_rating = results.get_highest_rated(listings)
-    cheapest_price = results.get_cheapest(listings)
+    highest_rating = get_highest_rated(listings)
+    cheapest_price = get_cheapest(listings)
 
     # Log results to console
     logger.info(f"This is the highest rated listing: {highest_rating}")

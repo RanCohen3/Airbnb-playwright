@@ -4,7 +4,7 @@ from pages.home_page import AirBnbHomePage
 from pages.listing_details_page import ListingDetailsPage
 from pages.search_results_page import SearchResultsPage
 from test_config import case_two_conf
-
+from utils.helpers import get_highest_rated
 
 logger = logging.getLogger("airbnb_tests")
 
@@ -47,9 +47,8 @@ def test_case_two(page):
     # 4. Analyze results
     results = SearchResultsPage(home.page)
     listings = results.extract_details()
-    highest_rating = results.get_highest_rated(listings)
+    highest_rating = get_highest_rated(listings)
     logger.info("Navigating to the highest rated listing")
-    # highest_rating['listing'].click()
     with results.page.expect_popup() as popup_info:
         highest_rating['listing'].click()
         raw_details_page = popup_info.value
