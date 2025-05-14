@@ -16,12 +16,23 @@ class AirBnbHomePage(BasePage):
         super().__init__(page)
         self.logger = logging.getLogger(__name__)
 
-    def goto(self):
+    def open_page(self):
         self.page.goto(self.URL)
 
-    def accept_cookies(self):
-        if self.page.locator("button:has-text('Accept')").is_visible():
-            self.page.click("button:has-text('Accept')")
+    def wait_page_load(self):
+        self.page.wait_for_load_state('domcontentloaded')
+    def switch_he_to_en(self):
+        if "he." in self.page.url:
+            # If not on the US site, look for the language/currency button
+            language_currency_button = self.page.locator(
+                "button[aria-label='בחירת שפה ומטבע']")  # Modify this selector if needed
+            language_currency_button.click()  # Click to open the dropdown
+
+            # Wait for the dropdown to open and select the US option (you'll need to find the exact selector for US)
+            # us_option = page.locator("lang=en-US)")  # Change this selector if needed
+            us_option = self.page.locator('a[lang="en-US"]')
+            us_option.click()  # Click on English (US)
+
 
     def select_date(self, target_date: str):
         """Navigates calendar to select a date like '2025-08-01'"""
@@ -39,30 +50,24 @@ class AirBnbHomePage(BasePage):
 
     def search(self, location, checkin, checkout, adults, children=0):
         # Search for location
-        self.try_close_popup()
-        homes_span_class = 'span[data-title="Homes"]'
-        self.page.locator('span[data-title="Homes"]').click()        # span_locator.click()
-
+        self.page.locator('span[data-title="Homes"]').click()
         self.page.wait_for_selector(self.SEARCH_BUTTON).click()
-        # self.page.click("[data-testid='structured-search-input-field-query']")
         self.page.wait_for_selector("input[id='bigsearch-query-location-input']")
         self.page.fill("input[id='bigsearch-query-location-input']", location)
         self.page.keyboard.press("Enter")
 
         # select dates
-        self.try_close_popup()
         self.select_dates(checkin, checkout)
 
-        #Add guests
+        # Add guests
         who_button = self.page.get_by_text("Who", exact=True)
         who_button.click()
 
+        # All plus selector has the same identifier, hence going by their indexes
         for _ in range(adults):
-            # self.page.click('[data-testid=""stepper-adults-increase-button""]')
-            self.page.get_by_role("button", name="increase value").first.click()
+            self.page.get_by_role("button", name="increase value").nth(0).click()
 
         for _ in range(children):
-            # self.page.get_by_test_id("stepper-children-increase-button").click()
             self.page.get_by_role("button", name="increase value").nth(1).click()
 
         self.page.locator('[data-testid="structured-search-input-search-button"]').click()
@@ -72,16 +77,8 @@ class AirBnbHomePage(BasePage):
         """Selects check-in and check-out dates, scrolling months if needed"""
         next_month_button = "button[aria-label='Move forward to switch to the next month.']"
         for _ in range(12):  # Try up to 12 months ahead
-            # checkin_locator = self.page.locator(f"[data-state--date-string='{checkin}']")
-            checkin_locator = self.page.get_by_role("button", name="1, Friday, August 2025. Available. Select as check-in date.")
-            # checkout_locator = self.page.locator(f"[data-state--date-string='{checkout}']")
-            checkout_locator = self.page.get_by_role("button", name="5, Tuesday, August 2025. Available. Select as checkout date.")
-
-
-
-            # self.try_close_popup()
-            # checkin_locator.wait_for(state="visible", timeout=5000)
-            # self.try_close_popup()
+            checkin_locator = self.page.locator(f"button[data-state--date-string='{checkin}']")
+            checkout_locator = self.page.locator(f"button[data-state--date-string='{checkout}']")
 
             if checkin_locator.is_visible():
                 checkin_locator.click()
@@ -90,27 +87,15 @@ class AirBnbHomePage(BasePage):
                 checkout_locator.click()
                 return
 
-
             self.page.get_by_role("button", name="Move forward to switch to the next month.").click()
-            # next_button = self.page.locator(next_month_button)
-            # next_button.wait_for(state="visible", timeout=5000)
-            # next_button.click()
-            #
-            # # Wait for the "next month" button to exist and be visible
-            # self.page.wait_for_selector(next_month_button, timeout=10000)
-            #
-            # # Click it using force just in case it's overlapped
-            # self.page.locator(next_month_button).click(force=True)
 
         raise Exception(f"Could not find check-in/check-out dates: {checkin} - {checkout}")
 
-    def try_close_popup(self):
+    def handle_popup_if_exists(self):
         try:
             close_button = self.page.locator("button[aria-label='Close']")
             if close_button.is_visible(timeout=2000):
+                logging.info("Found a popup, closing...")
                 close_button.click()
-                self.page.wait_for_timeout(500)  # give it time to disappear
-                return True
         except Exception:
-            pass
-        return False
+            logging.error(f"Was not able to find a popup")

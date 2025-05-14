@@ -96,10 +96,9 @@ class ListingDetailsPage(BasePage):
         return self
 
     def enter_phone_number(self, phone_number: str):
-        """Enter a phone number in the reservation form
-
-        Args:
-            phone_number: Phone number to enter
+        """
+        Enter a phone number in the reservation form
+        :param phone_number: Phone number
         """
         self.logger.info(f"Entering phone number: {phone_number}")
 
@@ -108,12 +107,6 @@ class ListingDetailsPage(BasePage):
 
         # Fill the phone number input
         self.page.fill(self.PHONE_NUMBER_INPUT, phone_number)
-        return self
-
-    def click_continue_button(self):
-        """Click the continue button"""
-        self.logger.info("Clicking continue button")
-        self.page.click(self.CONTINUE_BUTTON)
         return self
 
     def validate_reservation_details(self, original_details: Dict):
