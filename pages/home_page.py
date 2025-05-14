@@ -93,9 +93,11 @@ class AirBnbHomePage(BasePage):
 
     def handle_popup_if_exists(self):
         try:
-            close_button = self.page.locator("button[aria-label='Close']")
-            if close_button.is_visible(timeout=2000):
-                logging.info("Found a popup, closing...")
-                close_button.click()
+            logging.info(f"Looking for popups")
+            has_pop_up = self.page\
+                .wait_for_selector('div[data-testid="modal-container"]', state='visible', timeout=1000 * 10)
+            if has_pop_up:
+                self.page.query_selector('button:is([aria-label="Close"], [aria-label="סגירה"])').click()
+                # self.page.locator("button[aria-label='סגירה']").click()
         except Exception:
             logging.error(f"Was not able to find a popup")

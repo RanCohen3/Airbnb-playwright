@@ -19,9 +19,9 @@ def test_case_one(page):
     home.handle_popup_if_exists()
     home.switch_he_to_en()
     home.wait_page_load()
+    home.handle_popup_if_exists()
 
     # 2. Search for apartments
-    home.handle_popup_if_exists()
     # TODO the
     home.search(location="Tel Aviv-Yafo", checkin="2025-08-01", checkout="2025-08-05", adults=2)
 
