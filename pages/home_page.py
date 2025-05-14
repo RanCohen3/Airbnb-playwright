@@ -15,14 +15,9 @@ class AirBnbHomePage(BasePage):
         super().__init__(page)
         self.logger = logging.getLogger(__name__)
 
-    def open_page(self):
-        self.page.goto(self.URL)
-
     def get_url(self):
         return self.page.url
 
-    def wait_page_load(self):
-        self.page.wait_for_load_state('domcontentloaded')
     def switch_he_to_en(self):
         if "he." in self.page.url:
             # If not on the US site, look for the language/currency button
@@ -99,7 +94,7 @@ class AirBnbHomePage(BasePage):
             has_pop_up = self.page\
                 .wait_for_selector('div[data-testid="modal-container"]', state='visible', timeout=1000 * 10)
             if has_pop_up:
+                logging.info("Found popup, closing..")
                 self.page.query_selector('button:is([aria-label="Close"], [aria-label="סגירה"])').click()
-                # self.page.locator("button[aria-label='סגירה']").click()
         except Exception:
             logging.error(f"Was not able to find a popup")

@@ -33,9 +33,10 @@ def test_case_one(page):
     assert f"checkin={checkin}" in current_url
     assert f"checkout={checkout}" in current_url
     assert f"adults={adults_count}" in current_url
+    logger.info("Arguments assertions done")
 
     # 4. Analyze results
-    results = SearchResultsPage(page)
+    results = SearchResultsPage(home.page)
     listings = results.extract_details()
     highest_rating = results.get_highest_rated(listings)
     cheapest_price = results.get_cheapest(listings)

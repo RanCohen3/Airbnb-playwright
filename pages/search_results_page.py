@@ -11,75 +11,17 @@ class SearchResultsPage(BasePage):
         super().__init__(page)
         self.logger = logging.getLogger(__name__)
 
-    def validate_guests(self, adults, children):
-        """
-        This method validates the number of adults and children of the reservation
-        :param adults: Number of expected adults
-        :param children: Number of expected children
-        """
-        # TODO figure out why this does not work - timing issue
-        # TODO extract the regex to a diff method - did not work for me
-        self.page.wait_for_load_state('domcontentloaded')
-        match = re.search(r'adults=(\d+)', self.page.content())
-        if match:
-            adults_from_page = int(match.group(1))
-        else:
-            raise ValueError("Could not find any data on adults guests")
-
-        if not adults == adults_from_page:
-            logging.info(f"adults entered={adults}  validation failed")
-            return False
-
-        if children:
-            if not f"children={children}" in self.page.content():
-                raise ValueError("Number of children validation failed")
-
-        return True
-
-    def extract_adults_from_page_content(self, content):
-        """
-        This method extract the nuber of adults guests from the page content.
-        :param content: page content
-        """
-        # TODO regex here
-        pass
-
-    def extract_children_from_page_content(self, content):
-        # TODO regex here
-        pass
-
-    def validate_dates(self, checkin, checkout):
-        # TODO Regex in a diff method
-        check_in_match = re.search(r'check_in=([0-9]{4}-[0-9]{2}-[0-9]{2})', self.page.content())
-        if check_in_match:
-            check_in_date = check_in_match.group(1)
-        else:
-            raise ValueError("Could not find check in date")
-
-        check_out_match = re.search(r'check_out=([0-9]{4}-[0-9]{2}-[0-9]{2})', self.page.content())
-        if check_out_match:
-            check_out_date = check_out_match.group(1)
-        else:
-            raise ValueError("Could not find check out date")
-
-        if checkin != check_in_date:
-            logging.info(f"check in date entered: {checkin}, check in received {check_in_date}")
-            return False
-        if checkout != check_out_date:
-            logging.info(f"check out date entered: {checkin}, check out received {check_in_date}")
-            return False
-
-        return True
-
     def get_listings(self):
         """
         This method returns all the listing of the results page
         """
-        return self.page.locator("[itemprop='itemListElement']").all()
+        return self.page.locator("div[itemprop='itemListElement']").all()
 
     def extract_details(self):
+        self.wait_page_load()
         listings = self.get_listings()
         details = []
+        logging.info(f"found {len(listings)} listings")
 
         for listing in listings:
             title = listing.locator("meta[itemprop='name']").get_attribute("content")
