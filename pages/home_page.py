@@ -7,7 +7,6 @@ from pages.base_page import BasePage
 
 class AirBnbHomePage(BasePage):
     URL = "https://www.airbnb.com/"
-    # URL = "https://www.airbnb.com/s/Tel-Aviv~Yafo/homes?refinement_paths%5B%5D=%2Fhomes&date_picker_type=calendar&place_id=ChIJH3w7GaZMHRURkD-WwKJy-8E&location_bb=QgCWIUILaGxCAB30Qgr4Vg%3D%3D&acp_id=4c8ed6e0-b6ab-4266-9b2c-6fbf97df7c7a&checkin=2025-08-01&checkout=2025-08-05&adults=2&children=1&source=structured_search_input_header&search_type=autocomplete_click"
     SEARCH_BUTTON = "[data-testid='structured-search-input-field-query']"
     NEXT_MONTH_BUTTON = '[aria-label="Next"]'
     CALENDAR_DAY_SELECTOR = "[data-testid^='calendar-day-']"
@@ -20,7 +19,7 @@ class AirBnbHomePage(BasePage):
         self.page.goto(self.URL)
 
     def get_url(self):
-        return self.URL
+        return self.page.url
 
     def wait_page_load(self):
         self.page.wait_for_load_state('domcontentloaded')
