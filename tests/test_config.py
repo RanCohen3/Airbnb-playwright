@@ -16,5 +16,6 @@ case_two_conf = {
     "checkin": checkin,
     "checkout": checkout,
     "adults_count": adults_count,
-    "children_count": 1
+    "children_count": 1,
+    "phone_number": "123456789"
 }

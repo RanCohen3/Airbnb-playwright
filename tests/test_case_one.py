@@ -47,5 +47,6 @@ def test_case_one(page):
 
     # Log results to console
     logger.info(f"This is the highest rated listing: {highest_rating}")
-
     logger.info(f"This is the cheapest listing: {cheapest_price}")
+
+    logger.info("Finished TEST CASE ONE")

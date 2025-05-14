@@ -4,6 +4,8 @@ from playwright.sync_api import Page
 
 class BasePage:
     URL = "https://www.airbnb.com/"
+    LANG_SWITCH_BUTTON = 'button[aria-label="בחירת שפה ומטבע"]'
+    EN_BUTTON = 'a[lang="en-US"]'
 
     def __init__(self, page: Page):
         self.page = page
@@ -19,24 +21,17 @@ class BasePage:
         self.page.wait_for_timeout(1000 * 5)
 
     def switch_he_to_en(self):
-        if "he." in self.page.url or self.page.query_selector('button[aria-label="בחירת שפה ומטבע"]') is not None:
-            # If not on the US site, look for the language/currency button
-            language_currency_button = self.page.locator(
-                "button[aria-label='בחירת שפה ומטבע']")  # Modify this selector if needed
-            language_currency_button.click()  # Click to open the dropdown
+        if "he." in self.page.url or self.page.query_selector(self.LANG_SWITCH_BUTTON) is not None:
+            language_currency_button = self.page.locator(self.LANG_SWITCH_BUTTON)
+            # open dropdown
+            language_currency_button.click()
 
-            # Wait for the dropdown to open and select the US option (you'll need to find the exact selector for US)
-            # us_option = page.locator("lang=en-US)")  # Change this selector if needed
-            us_option = self.page.locator('a[lang="en-US"]')
-            us_option.click()  # Click on English (US)
+            us_option = self.page.locator(self.EN_BUTTON)
+            us_option.click()
 
     def handle_popup_if_exists(self):
         try:
             logging.info(f"Looking for popups")
-            # has_pop_up = self.page \
-            #     .wait_for_selector('div[data-testid="modal-container"]', state='visible', timeout=1000 * 10)
-            # if has_pop_up:
-            #     logging.info("Found popup, closing..")
             self.page \
                 .wait_for_selector('div[data-testid="modal-container"]', state='visible', timeout=1000 * 10)
             self.page.query_selector('button:is([aria-label="Close"], [aria-label="סגירה"])').click()

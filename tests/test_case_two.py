@@ -15,7 +15,8 @@ def test_case_two(page):
     checkout = case_two_conf["checkout"]
     adults_count = case_two_conf["adults_count"]
     children_count = case_two_conf["children_count"]
-    logger.info("starting test case one")
+    phone_number = case_two_conf["phone_number"]
+    logger.info("starting test case two")
 
     # 1. Navigate to airbnb homepage
     home = AirBnbHomePage(page)
@@ -60,11 +61,23 @@ def test_case_two(page):
     listing_details.wait_page_load()
     listing_details.handle_popup_if_exists()
 
+    listing_details.wait_page_load()
     details = listing_details.get_reservation_details()
 
     logger.info(f"price per night {details['price_per_night']}")
     logger.info(f"check in on {details['check-in']}")
     logger.info(f"check out on {details['check-out']}")
+
+    listing_details.click_reserve_button()
+    listing_details.wait_page_load()
+
+    listing_details.request_to_book_next()
+    listing_details.wait_page_load()
+
+    listing_details.enter_phone_number(phone_number=phone_number)
+
+    logger.info("Finished TEST CASE TWO")
+
 
 
 

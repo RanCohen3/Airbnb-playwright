@@ -1,38 +1,33 @@
 import logging
 
-from playwright.sync_api import expect
-
 from pages.base_page import BasePage
 
 
 class AirBnbHomePage(BasePage):
     URL = "https://www.airbnb.com/"
     SEARCH_BUTTON = "[data-testid='structured-search-input-field-query']"
-    NEXT_MONTH_BUTTON = '[aria-label="Next"]'
-    CALENDAR_DAY_SELECTOR = "[data-testid^='calendar-day-']"
+    NEXT_MONTH_BUTTON = "Move forward to switch to the next month."
+    PRESS_SEARCH = '[data-testid="structured-search-input-search-button"]'
 
     def __init__(self, page):
         super().__init__(page)
         self.logger = logging.getLogger(__name__)
 
     def get_url(self):
+        """
+        Get url
+        """
         return self.page.url
 
-    def select_date(self, target_date: str):
-        """Navigates calendar to select a date like '2025-08-01'"""
-        selector = f"[data-testid='calendar-day-{target_date}']"
-        max_tries = 12  # Limit month scrolling to avoid infinite loop
-
-        for _ in range(max_tries):
-            if self.page.locator(selector).is_visible():
-                self.page.locator(selector).click()
-                return
-            self.page.locator(self.NEXT_MONTH_BUTTON).click()
-            self.page.wait_for_timeout(300)
-
-        raise Exception(f"Date {target_date} not found or not selectable")
-
     def search(self, location, checkin, checkout, adults, children=0):
+        """
+        This method in charge of entering all the data to the search.
+        :param location: The location to search for.
+        :param checkin: Check in date
+        :param checkout: Check in date
+        :param adults: Number of adults
+        :param children: Number of children
+        """
         # Search for location
         self.page.locator('span[data-title="Homes"]').click()
         self.page.wait_for_selector(self.SEARCH_BUTTON).click()
@@ -54,13 +49,17 @@ class AirBnbHomePage(BasePage):
         for _ in range(children):
             self.page.get_by_role("button", name="increase value").nth(1).click()
 
-        self.page.locator('[data-testid="structured-search-input-search-button"]').click()
+        self.page.locator(self.PRESS_SEARCH).click()
 
-    def select_dates(self, checkin: str, checkout: str):
+    def select_dates(self, checkin, checkout):
+        """
+        This method selects the dates in the calendar.
+        :param checkin: Check in date
+        :param checkout: Check out date
+        """
         checked_in = False
-        """Selects check-in and check-out dates, scrolling months if needed"""
-        next_month_button = "button[aria-label='Move forward to switch to the next month.']"
-        for _ in range(12):  # Try up to 12 months ahead
+        for _ in range(12):
+            # Try up to 12 months ahead
             checkin_locator = self.page.locator(f"button[data-state--date-string='{checkin}']")
             checkout_locator = self.page.locator(f"button[data-state--date-string='{checkout}']")
 
@@ -71,6 +70,6 @@ class AirBnbHomePage(BasePage):
                 checkout_locator.click()
                 return
 
-            self.page.get_by_role("button", name="Move forward to switch to the next month.").click()
+            self.page.get_by_role("button", name=self.NEXT_MONTH_BUTTON).click()
 
         raise Exception(f"Could not find check-in/check-out dates: {checkin} - {checkout}")

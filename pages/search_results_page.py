@@ -4,8 +4,8 @@ import re
 
 
 class SearchResultsPage(BasePage):
-    LISTING_RATING_ELEMENT = "span[aria-label*='rating']"
-    LISTING_LINK = "a[data-testid='card-link']"
+    GET_LISTINGS = "div[itemprop='itemListElement']"
+    LISTING_TITLE = "meta[itemprop='name']"
 
     def __init__(self, page):
         super().__init__(page)
@@ -15,7 +15,7 @@ class SearchResultsPage(BasePage):
         """
         This method returns all the listing of the results page
         """
-        return self.page.locator("div[itemprop='itemListElement']").all()
+        return self.page.locator(self.GET_LISTINGS).all()
 
     def extract_details(self):
         self.wait_page_load()
@@ -24,11 +24,10 @@ class SearchResultsPage(BasePage):
         logging.info(f"found {len(listings)} listings")
 
         for listing in listings:
-            title = listing.locator("meta[itemprop='name']").get_attribute("content")
+            title = listing.locator(self.LISTING_TITLE).get_attribute("content")
             raw_price = listing.locator("span:has-text('₪')").first.text_content().strip()
             price_match = re.search(r'₪([\d,]+)', raw_price)
             # If a match is found, remove commas and convert to integer
-            # TODO raise instead of None?
             price = int(price_match.group(1).replace(',', '')) if price_match else None
 
             # Get listing rating
@@ -91,6 +90,10 @@ class SearchResultsPage(BasePage):
         return top_listing
 
     def get_cheapest(self, listings):
+        """
+        Get the cheapest listing
+        :param listings: List of listings
+        """
         min_listing = None
         min_price = float('inf')
 
