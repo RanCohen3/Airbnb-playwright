@@ -18,19 +18,6 @@ class AirBnbHomePage(BasePage):
     def get_url(self):
         return self.page.url
 
-    def switch_he_to_en(self):
-        if "he." in self.page.url:
-            # If not on the US site, look for the language/currency button
-            language_currency_button = self.page.locator(
-                "button[aria-label='בחירת שפה ומטבע']")  # Modify this selector if needed
-            language_currency_button.click()  # Click to open the dropdown
-
-            # Wait for the dropdown to open and select the US option (you'll need to find the exact selector for US)
-            # us_option = page.locator("lang=en-US)")  # Change this selector if needed
-            us_option = self.page.locator('a[lang="en-US"]')
-            us_option.click()  # Click on English (US)
-
-
     def select_date(self, target_date: str):
         """Navigates calendar to select a date like '2025-08-01'"""
         selector = f"[data-testid='calendar-day-{target_date}']"
@@ -87,14 +74,3 @@ class AirBnbHomePage(BasePage):
             self.page.get_by_role("button", name="Move forward to switch to the next month.").click()
 
         raise Exception(f"Could not find check-in/check-out dates: {checkin} - {checkout}")
-
-    def handle_popup_if_exists(self):
-        try:
-            logging.info(f"Looking for popups")
-            has_pop_up = self.page\
-                .wait_for_selector('div[data-testid="modal-container"]', state='visible', timeout=1000 * 10)
-            if has_pop_up:
-                logging.info("Found popup, closing..")
-                self.page.query_selector('button:is([aria-label="Close"], [aria-label="סגירה"])').click()
-        except Exception:
-            logging.error(f"Was not able to find a popup")

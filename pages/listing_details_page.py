@@ -21,11 +21,11 @@ class ListingDetailsPage(BasePage):
         super().__init__(page)
         self.logger = logging.getLogger(__name__)
 
-    def wait_for_page_load(self):
-        """Wait for the listing details page to load"""
-        self.logger.info("Waiting for listing details page to load")
-        self.page.wait_for_selector(self.LISTING_TITLE)
-        return self
+    # def wait_for_page_load(self):
+    #     """Wait for the listing details page to load"""
+    #     self.logger.info("Waiting for listing details page to load")
+    #     self.page.wait_for_selector(self.LISTING_TITLE)
+    #     return self
 
     def get_reservation_details(self) -> Dict:
         """Get details from the reservation card
