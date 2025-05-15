@@ -70,13 +70,16 @@ def test_case_two(page):
     listing_details.click_reserve_button()
     listing_details.wait_page_load()
 
+    trip_details = listing_details.extract_trip_details_from_reservation()
+
+    assert trip_details["checkin"] == checkin
+    assert trip_details["checkout"] == checkout
+    assert trip_details["adults"] == adults_count
+    assert trip_details["children"] == children_count
+
     listing_details.request_to_book_next()
     listing_details.wait_page_load()
 
     listing_details.enter_phone_number(phone_number=phone_number)
 
     logger.info("Finished TEST CASE TWO")
-
-
-
-
